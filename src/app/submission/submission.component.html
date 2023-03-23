@@ -1,0 +1,128 @@
+<section class="mx-4">
+    <h4 class="my-4">Submission</h4>
+    <div class="header">
+        <form class="row g-3">
+            <div class="col-auto">
+                <input type="text" class="form-control" placeholder="Search..." [(ngModel)]="searchText" name="sText"
+                    #sText="ngModel" (ngModelChange)="filterData()">
+            </div>
+            <div class="col-auto">
+                <select class="form-select"  aria-label="Select status" (change)="filterDataFromStatus($event)">
+                    <option selected disabled>Select status</option>
+                    <option *ngFor="let item of status$ | async" [value]="item.name">{{item.name}}</option>
+                </select>
+            </div>
+            <div class="col-auto">
+                <select class="form-select" aria-label="Select From" (change)="filterDataFrom($event)">
+                    <option selected disabled>Select From</option>
+                    <option>zendu@zendu.com</option>
+                    <!-- <option *ngFor="let item of status$ | async" [value]="item.name">{{item.name}}</option> -->
+                </select>
+            </div>
+            <div class="col-auto">
+                <input type="date" [ngModel] ="searchDate | date:'yyyy-MM-dd'" class="form-control" (ngModelChange)="searchDate = $event" [value]="searchDate | date:'yyyy-MM-dd'" name="submission-date">
+            </div>
+        </form>
+
+        <div class="col-auto submission-tabs">
+            <ul class="nav nav-tabs" id="myTab" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="home-tab" data-bs-toggle="tab" data-bs-target="#map"
+                        type="button" role="tab" aria-controls="home" aria-selected="true">MAP</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="profile-tab" data-bs-toggle="tab" data-bs-target="#list" type="button"
+                        role="tab" aria-controls="profile" aria-selected="false">LIST</button>
+                </li>
+            </ul>
+
+
+
+            <a type="submit">Export</a>
+        </div>
+
+    </div>
+    <div class="tab-content" id="myTabContent">
+        <div class="tab-pane fade" id="list" role="tabpanel" aria-labelledby="list-tab">
+            <table class="w-100 table table-bordered">
+                <thead class="text-left">
+                    <tr>
+                        <th class="text-center"><input type="checkbox" name="" id=""></th>
+                        <th>Task</th>
+                        <th>Status</th>
+                        <th>From</th>
+                        <th>To</th>
+                        <th>Customer Address</th>
+                        <th>Due Date</th>
+                    </tr>
+                </thead>
+                <tbody class="text-left">
+                    <tr *ngFor="let item of submissionData$ | async">
+                        <td class="text-center"><input type="checkbox" name="" id=""></td>
+                        <td>
+                            {{item.task}}
+                        </td>
+                        <td class="w-10" style="font-weight: bold;">
+                            <div class="d-flex box-bodered"
+                                [ngClass]="{'bg-gray': item.status === 'Low Risk' , 'bg-red': item.status === 'Uncomplete' , 'bg-disabled': item.status === 'Unassigned' }">
+                                <div class="circle"></div> {{item.status}}
+                            </div>
+
+                        </td>
+                        <td>
+                            {{item.from}}
+                        </td>
+                        <td>
+                            {{item.to}}
+                        </td>
+                        <td>
+                            {{item.address}}
+                        </td>
+                        <td style="font-weight: bold;"
+                            [ngClass]="{'text-success': item.status === 'Low Risk' , 'text-danger': item.status === 'Uncomplete' , 'text-secondary': item.status === 'Unassigned' }">
+                            {{item.date | date: 'short'}}
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="tab-pane fade show active" id="map" role="tabpanel" aria-labelledby="map-tab">
+            <div class="submission-details">
+                <div>
+                    <div class="card" *ngFor="let item of submissionData$ | async">
+
+                        <div class="card-body">
+                            <div class="header-section">
+                                <h6 class="card-title">{{item.task}}</h6>
+                                <div class="d-flex box-bodered"
+                                    [ngClass]="{'bg-gray': item.status === 'Low Risk' , 'bg-red': item.status === 'Uncomplete' , 'bg-disabled': item.status === 'Unassigned' }">
+                                    <div class="circle"></div> {{item.status}}
+                                </div>
+
+                            </div>
+                            <p class="mb-0">
+                                <label for="from" class="text-secondary">From:</label> {{item.from}}
+                            </p>
+                            <p class="mb-0">
+                                <label for="to" class="text-secondary">To:</label> {{item.to}}
+                            </p>
+                            <p class="mb-0">
+                                <label for="dueDate" class="text-secondary"> Due Date:</label> <span
+                                    [ngClass]="{'text-success': item.status === 'Low Risk' , 'text-danger': item.status === 'Uncomplete' , 'text-secondary': item.status === 'Unassigned' }">
+                                    {{item.date | date:'fullDate'}}
+                                </span>
+                            </p>
+
+                        </div>
+                    </div>
+                </div>
+
+                <div class="map">
+                   <app-map [result]="submissionData$"></app-map>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+</section>
